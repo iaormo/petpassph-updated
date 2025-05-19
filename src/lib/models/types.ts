@@ -24,6 +24,7 @@ export interface MedicalRecord {
   medication: string;
   veterinarian: string;
   followUp?: string;
+  imageUrl?: string; // URL for uploaded images (X-rays, etc.)
 }
 
 // Mock credentials for demo purposes

@@ -64,7 +64,7 @@ const PetDetails = () => {
         </div>
 
         {/* Tabs for medical history, vaccines, notes */}
-        <PetDetailsTabs pet={pet} />
+        <PetDetailsTabs pet={pet} setPet={setPet} />
       </div>
     </Layout>
   );

@@ -4,22 +4,27 @@ import Layout from '@/components/Layout';
 import { Button } from '@/components/ui/button';
 import DashboardStats from '@/components/DashboardStats';
 import PetCard from '@/components/PetCard';
-import { mockPets, Pet } from '@/lib/mockData';
+import { mockPets } from '@/lib/data/mockPets';
+import { Pet } from '@/lib/models/types';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription, SheetTrigger } from '@/components/ui/sheet';
 import PetForm from '@/components/PetForm';
 import { toast } from '@/hooks/use-toast';
 import { PlusCircle } from 'lucide-react';
+import { addPet } from '@/lib/utils/petUtils';
 
 const Dashboard = () => {
   const [pets, setPets] = useState(mockPets);
   const [isAddingPet, setIsAddingPet] = useState(false);
 
   const handleAddPet = (newPet: Pet) => {
-    setPets([newPet, ...pets]);
+    // Add the pet using the utility function which also updates the mockPets array
+    const addedPet = addPet(newPet);
+    // Update the local state
+    setPets([...mockPets]); // Use the updated mockPets array
     setIsAddingPet(false);
     toast({
       title: "Pet Added",
-      description: `${newPet.name} has been added successfully.`,
+      description: `${addedPet.name} has been added successfully.`,
     });
   };
 

@@ -1,4 +1,3 @@
-
 import React from "react";
 import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
@@ -12,7 +11,9 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Pet } from "@/lib/models/types";
-import { Camera } from "lucide-react";
+import { Camera, RefreshCw } from "lucide-react";
+import { generateQRCode } from "@/lib/utils/petUtils";
+import { toast } from "@/hooks/use-toast";
 
 interface PetFormProps {
   pet?: Pet;
@@ -32,7 +33,7 @@ const PetForm: React.FC<PetFormProps> = ({ pet, onSubmit }) => {
       ownerName: "",
       ownerContact: "",
       lastVisit: new Date().toISOString().split("T")[0],
-      qrCode: "",
+      qrCode: generateQRCode(),
       medicalRecords: [],
       profileImg: "",
       id: ""
@@ -40,11 +41,10 @@ const PetForm: React.FC<PetFormProps> = ({ pet, onSubmit }) => {
   });
 
   const handleSubmit = (data: any) => {
-    // For a new pet, we'd generate an ID and QR code server-side
+    // For a new pet, we'd generate an ID server-side
     // For now we're just mocking that behavior
     if (!isEditing) {
-      data.id = `p${Math.floor(Math.random() * 1000).toString().padStart(3, '0')}`;
-      data.qrCode = data.id;
+      data.id = data.qrCode || generateQRCode();
       data.medicalRecords = [];
     }
 
@@ -63,9 +63,21 @@ const PetForm: React.FC<PetFormProps> = ({ pet, onSubmit }) => {
       
       reader.readAsDataURL(file);
     } else {
-      // No new image was selected
+      // No new image was selected, keep existing or use placeholder
+      if (!data.profileImg) {
+        data.profileImg = "https://images.unsplash.com/photo-1517849845537-4d257902454a?q=80&w=200&auto=format&fit=crop";
+      }
       onSubmit(data as Pet);
     }
+  };
+
+  const regenerateQRCode = () => {
+    const newQRCode = generateQRCode();
+    form.setValue("qrCode", newQRCode);
+    toast({
+      title: "QR Code Generated",
+      description: `New QR Code: ${newQRCode}`,
+    });
   };
 
   return (
@@ -219,6 +231,25 @@ const PetForm: React.FC<PetFormProps> = ({ pet, onSubmit }) => {
                 <FormControl>
                   <Input type="date" {...field} />
                 </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="qrCode"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>QR Code</FormLabel>
+                <div className="flex gap-2">
+                  <FormControl>
+                    <Input placeholder="QR Code" {...field} readOnly />
+                  </FormControl>
+                  <Button type="button" variant="outline" onClick={regenerateQRCode}>
+                    <RefreshCw className="h-4 w-4" />
+                  </Button>
+                </div>
                 <FormMessage />
               </FormItem>
             )}

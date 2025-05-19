@@ -1,21 +1,32 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import AddMedicalRecordForm from '@/components/AddMedicalRecordForm';
-import { PlusCircle } from 'lucide-react';
+import { PlusCircle, FileImage } from 'lucide-react';
 import { Pet, MedicalRecord } from '@/lib/models/types';
 import { toast } from '@/hooks/use-toast';
+import { addMedicalRecord } from '@/lib/utils/petUtils';
 
 interface MedicalRecordsTabProps {
   pet: Pet;
+  setPet?: React.Dispatch<React.SetStateAction<Pet | null>>;
 }
 
-const MedicalRecordsTab: React.FC<MedicalRecordsTabProps> = ({ pet }) => {
-  const handleAddMedicalRecord = () => {
-    // In a real app, this would save to database
-    // For now, just show a success message
+const MedicalRecordsTab: React.FC<MedicalRecordsTabProps> = ({ pet, setPet }) => {
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  
+  const handleAddMedicalRecord = (record: MedicalRecord) => {
+    // Add the medical record to the pet
+    const success = addMedicalRecord(pet.id, record);
+    
+    if (success && setPet) {
+      // Force a re-render by updating the pet state with a new reference
+      setPet({...pet});
+    }
+    
+    setIsDialogOpen(false);
     toast({
       title: "Record Added",
       description: "Medical record has been added to the pet's file.",
@@ -29,7 +40,7 @@ const MedicalRecordsTab: React.FC<MedicalRecordsTabProps> = ({ pet }) => {
           <CardTitle>Medical Records</CardTitle>
           <CardDescription>Complete medical history for {pet.name}</CardDescription>
         </div>
-        <Dialog>
+        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
           <DialogTrigger asChild>
             <Button size="sm" className="ml-auto" variant="outline">
               <PlusCircle className="mr-2 h-4 w-4" />
@@ -49,9 +60,15 @@ const MedicalRecordsTab: React.FC<MedicalRecordsTabProps> = ({ pet }) => {
       </CardHeader>
       <CardContent>
         <div className="space-y-4">
-          {pet.medicalRecords.map(record => (
-            <MedicalRecordCard key={record.id} record={record} />
-          ))}
+          {pet.medicalRecords.length > 0 ? (
+            pet.medicalRecords.map(record => (
+              <MedicalRecordCard key={record.id} record={record} />
+            ))
+          ) : (
+            <div className="text-center py-8 text-muted-foreground">
+              No medical records found. Add a record to get started.
+            </div>
+          )}
         </div>
       </CardContent>
     </Card>
@@ -88,6 +105,18 @@ const MedicalRecordCard: React.FC<MedicalRecordCardProps> = ({ record }) => {
           <div className="sm:col-span-2">
             <dt className="text-muted-foreground">Follow-up</dt>
             <dd className="mt-1">{record.followUp}</dd>
+          </div>
+        )}
+        {record.imageUrl && (
+          <div className="sm:col-span-2 mt-2">
+            <dt className="text-muted-foreground flex items-center gap-1">
+              <FileImage className="h-4 w-4" /> Results
+            </dt>
+            <dd className="mt-1">
+              <a href={record.imageUrl} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">
+                View Image
+              </a>
+            </dd>
           </div>
         )}
       </dl>

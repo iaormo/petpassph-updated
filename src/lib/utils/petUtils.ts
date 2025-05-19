@@ -34,6 +34,22 @@ export const addMedicalRecord = (petId: string, record: MedicalRecord): boolean 
 
 // Helper function to add a new pet
 export const addPet = (newPet: Pet): Pet => {
+  // Generate a new ID if one is not provided
+  if (!newPet.id) {
+    newPet.id = `p${Math.floor(Math.random() * 10000).toString().padStart(3, '0')}`;
+  }
+  
+  // Generate a QR code if one is not provided
+  if (!newPet.qrCode) {
+    newPet.qrCode = newPet.id;
+  }
+  
+  // Add the pet to the mockPets array
   mockPets.unshift(newPet); // Add to the beginning of the array
   return newPet;
+};
+
+// Helper function to generate a unique QR code
+export const generateQRCode = (): string => {
+  return `p${Math.floor(Math.random() * 10000).toString().padStart(3, '0')}`;
 };
