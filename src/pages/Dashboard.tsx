@@ -1,98 +1,61 @@
 
-import React, { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState } from 'react';
 import Layout from '@/components/Layout';
+import { Button } from '@/components/ui/button';
 import DashboardStats from '@/components/DashboardStats';
 import PetCard from '@/components/PetCard';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { dashboardStats, mockPets } from '@/lib/mockData';
+import { mockPets, Pet } from '@/lib/mockData';
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription, SheetTrigger } from '@/components/ui/sheet';
+import PetForm from '@/components/PetForm';
+import { toast } from '@/hooks/use-toast';
+import { PlusCircle } from 'lucide-react';
 
 const Dashboard = () => {
-  const navigate = useNavigate();
+  const [pets, setPets] = useState(mockPets);
+  const [isAddingPet, setIsAddingPet] = useState(false);
 
-  useEffect(() => {
-    // Check if user is authenticated
-    const isAuth = localStorage.getItem('isAuth') === 'true';
-    if (!isAuth) {
-      navigate('/');
-    }
-  }, [navigate]);
+  const handleAddPet = (newPet: Pet) => {
+    setPets([newPet, ...pets]);
+    setIsAddingPet(false);
+    toast({
+      title: "Pet Added",
+      description: `${newPet.name} has been added successfully.`,
+    });
+  };
 
   return (
     <Layout>
-      <div className="p-6 space-y-6">
-        <div className="flex items-center justify-between">
-          <h1 className="text-2xl font-bold">Dashboard</h1>
-          <div className="text-sm text-muted-foreground">
-            {new Date().toLocaleDateString('en-US', { 
-              weekday: 'long', 
-              year: 'numeric', 
-              month: 'long', 
-              day: 'numeric' 
-            })}
-          </div>
+      <div className="container mx-auto px-4 py-6">
+        <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-8">
+          <h1 className="text-3xl font-bold mb-4 md:mb-0">Vet Clinic Dashboard</h1>
+          <Sheet open={isAddingPet} onOpenChange={setIsAddingPet}>
+            <SheetTrigger asChild>
+              <Button>
+                <PlusCircle className="mr-2 h-4 w-4" />
+                Add New Pet
+              </Button>
+            </SheetTrigger>
+            <SheetContent className="sm:max-w-lg overflow-y-auto">
+              <SheetHeader>
+                <SheetTitle>Add New Pet</SheetTitle>
+                <SheetDescription>
+                  Fill in the pet's information below to add them to the system.
+                </SheetDescription>
+              </SheetHeader>
+              <div className="py-6">
+                <PetForm onSubmit={handleAddPet} />
+              </div>
+            </SheetContent>
+          </Sheet>
         </div>
         
         <DashboardStats />
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <Card>
-            <CardHeader className="pb-2">
-              <CardTitle>Upcoming Appointments</CardTitle>
-              <CardDescription>Today's scheduled appointments</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-2">
-                {[1, 2, 3].map(index => (
-                  <div key={index} className="flex items-center justify-between p-2 border rounded-md">
-                    <div className="flex items-center space-x-4">
-                      <div className="h-10 w-10 rounded-full bg-vet-light flex items-center justify-center">
-                        <span className="text-sm font-bold text-vet-blue">
-                          {10 + index}:00
-                        </span>
-                      </div>
-                      <div>
-                        <p className="text-sm font-medium">{mockPets[index - 1].name}</p>
-                        <p className="text-xs text-muted-foreground">{mockPets[index - 1].ownerName}</p>
-                      </div>
-                    </div>
-                    <div className="rounded-full px-2 py-1 text-xs bg-vet-light text-vet-teal font-medium">
-                      Check-up
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader className="pb-2">
-              <CardTitle>Recent Activity</CardTitle>
-              <CardDescription>Latest actions in the clinic</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                {dashboardStats.recentActivityLog.map((activity) => (
-                  <div key={activity.id} className="flex items-start space-x-3">
-                    <div className="flex-shrink-0 h-2 w-2 mt-2 rounded-full bg-vet-blue" />
-                    <div className="flex-1">
-                      <p className="text-sm">{activity.action}</p>
-                      <span className="text-xs text-muted-foreground">{activity.time}</span>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-
-        <div className="space-y-4">
-          <h2 className="text-xl font-semibold">Recent Patients</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            {mockPets.slice(0, 4).map(pet => (
-              <PetCard key={pet.id} pet={pet} showQR={false} />
-            ))}
-          </div>
+        
+        <h2 className="text-2xl font-semibold mt-8 mb-4">Recent Patients</h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {pets.map(pet => (
+            <PetCard key={pet.id} pet={pet} />
+          ))}
         </div>
       </div>
     </Layout>

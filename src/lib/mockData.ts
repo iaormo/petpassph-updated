@@ -182,3 +182,29 @@ export const getPetById = (id: string) => {
 export const getPetByQRCode = (qrCode: string) => {
   return mockPets.find(pet => pet.qrCode === qrCode);
 };
+
+// Helper function to update a pet
+export const updatePet = (updatedPet: Pet) => {
+  const index = mockPets.findIndex(pet => pet.id === updatedPet.id);
+  if (index !== -1) {
+    mockPets[index] = updatedPet;
+    return true;
+  }
+  return false;
+};
+
+// Helper function to add a medical record to a pet
+export const addMedicalRecord = (petId: string, record: MedicalRecord) => {
+  const pet = getPetById(petId);
+  if (pet) {
+    pet.medicalRecords.unshift(record); // Add to the beginning of the array
+    return true;
+  }
+  return false;
+};
+
+// Helper function to add a new pet
+export const addPet = (newPet: Pet) => {
+  mockPets.unshift(newPet); // Add to the beginning of the array
+  return newPet;
+};

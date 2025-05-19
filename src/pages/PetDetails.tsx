@@ -7,12 +7,19 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { QRCodeCanvas } from 'qrcode.react';
 import { getPetById, Pet } from '@/lib/mockData';
+import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import PetForm from '@/components/PetForm';
+import AddMedicalRecordForm from '@/components/AddMedicalRecordForm';
+import { PlusCircle } from 'lucide-react';
+import { toast } from '@/hooks/use-toast';
 
 const PetDetails = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const [pet, setPet] = useState<Pet | null>(null);
   const [loading, setLoading] = useState(true);
+  const [isEditing, setIsEditing] = useState(false);
 
   useEffect(() => {
     // Check if user is authenticated
@@ -33,6 +40,24 @@ const PetDetails = () => {
     }
     setLoading(false);
   }, [id, navigate]);
+
+  const handlePetUpdate = (updatedPet: Pet) => {
+    setPet(updatedPet);
+    setIsEditing(false);
+    toast({
+      title: "Success!",
+      description: "Pet information has been updated.",
+    });
+  };
+
+  const handleAddMedicalRecord = () => {
+    // In a real app, this would save to database
+    // For now, just show a success message
+    toast({
+      title: "Record Added",
+      description: "Medical record has been added to the pet's file.",
+    });
+  };
 
   if (loading || !pet) {
     return (
@@ -65,7 +90,22 @@ const PetDetails = () => {
             <Button variant="outline" asChild>
               <Link to="/scanner">Back to Scanner</Link>
             </Button>
-            <Button>Edit Pet Info</Button>
+            <Sheet open={isEditing} onOpenChange={setIsEditing}>
+              <SheetTrigger asChild>
+                <Button>Edit Pet Info</Button>
+              </SheetTrigger>
+              <SheetContent className="sm:max-w-lg overflow-y-auto">
+                <SheetHeader>
+                  <SheetTitle>Edit Pet Information</SheetTitle>
+                  <SheetDescription>
+                    Make changes to {pet.name}'s information here. Click save when you're done.
+                  </SheetDescription>
+                </SheetHeader>
+                <div className="py-6">
+                  <PetForm pet={pet} onSubmit={handlePetUpdate} />
+                </div>
+              </SheetContent>
+            </Sheet>
           </div>
         </div>
 
@@ -126,9 +166,28 @@ const PetDetails = () => {
           </TabsList>
           <TabsContent value="medical">
             <Card>
-              <CardHeader>
-                <CardTitle>Medical Records</CardTitle>
-                <CardDescription>Complete medical history for {pet.name}</CardDescription>
+              <CardHeader className="flex flex-row items-center justify-between pb-2">
+                <div>
+                  <CardTitle>Medical Records</CardTitle>
+                  <CardDescription>Complete medical history for {pet.name}</CardDescription>
+                </div>
+                <Dialog>
+                  <DialogTrigger asChild>
+                    <Button size="sm" className="ml-auto" variant="outline">
+                      <PlusCircle className="mr-2 h-4 w-4" />
+                      Add Record
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent className="sm:max-w-[525px]">
+                    <DialogHeader>
+                      <DialogTitle>Add Medical Record</DialogTitle>
+                      <DialogDescription>
+                        Add a new medical record for {pet.name}. Fill in all the required fields.
+                      </DialogDescription>
+                    </DialogHeader>
+                    <AddMedicalRecordForm petId={pet.id} onSubmit={handleAddMedicalRecord} />
+                  </DialogContent>
+                </Dialog>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
