@@ -1,9 +1,8 @@
-
 import React from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import MedicalRecordsTab from './MedicalRecordsTab';
 import PlaceholderTab from './PlaceholderTab';
-import { Pet } from '@/lib/mockData';
+import { Pet } from '@/lib/models/types';
 
 interface PetDetailsTabsProps {
   pet: Pet;

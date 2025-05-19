@@ -1,7 +1,6 @@
-
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Pet } from '@/lib/mockData';
+import { Pet } from '@/lib/models/types';
 
 interface PetInfoCardProps {
   pet: Pet;

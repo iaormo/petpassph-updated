@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import AddMedicalRecordForm from '@/components/AddMedicalRecordForm';
 import { PlusCircle } from 'lucide-react';
-import { Pet, MedicalRecord } from '@/lib/mockData';
+import { Pet, MedicalRecord } from '@/lib/models/types';
 import { toast } from '@/hooks/use-toast';
 
 interface MedicalRecordsTabProps {

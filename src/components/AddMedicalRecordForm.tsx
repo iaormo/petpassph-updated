@@ -1,4 +1,3 @@
-
 import React from "react";
 import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
@@ -12,7 +11,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { MedicalRecord } from "@/lib/mockData";
+import { MedicalRecord } from "@/lib/models/types";
 
 interface AddMedicalRecordFormProps {
   petId: string;

@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { dashboardStats, mockPets } from '@/lib/mockData';
+import { dashboardStats } from '@/lib/data/mockDashboard';
 
 const DashboardStats = () => {
   return (

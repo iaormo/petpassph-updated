@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import PetForm from '@/components/PetForm';
-import { Pet } from '@/lib/mockData';
+import { Pet } from '@/lib/models/types';
 import { toast } from '@/hooks/use-toast';
 
 interface PetHeaderProps {

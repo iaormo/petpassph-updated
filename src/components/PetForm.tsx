@@ -11,7 +11,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Pet } from "@/lib/mockData";
+import { Pet } from "@/lib/models/types";
 import { Camera } from "lucide-react";
 
 interface PetFormProps {

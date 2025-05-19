@@ -2,7 +2,8 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import Layout from '@/components/Layout';
-import { getPetById, Pet } from '@/lib/mockData';
+import { Pet } from '@/lib/models/types';
+import { getPetById } from '@/lib/utils/petUtils';
 import PetHeader from '@/components/pet-details/PetHeader';
 import PetInfoCard from '@/components/pet-details/PetInfoCard';
 import QRCodeCard from '@/components/pet-details/QRCodeCard';
