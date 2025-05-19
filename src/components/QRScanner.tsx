@@ -7,6 +7,10 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
 import { getPetByQRCode } from '@/lib/mockData';
 
+interface ScanResult {
+  text: string;
+}
+
 const QRScanner = () => {
   const [scanning, setScanning] = useState(false);
   const [result, setResult] = useState<string | null>(null);
@@ -15,7 +19,7 @@ const QRScanner = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
 
-  const handleScan = (data: any) => {
+  const handleScan = (data: ScanResult | null) => {
     if (data && data.text) {
       setResult(data.text);
       setScanning(false);
