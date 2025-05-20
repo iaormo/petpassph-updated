@@ -1,7 +1,7 @@
 
 {
-  "name": "PetCare Clinic CRM",
-  "short_name": "PetCare",
+  "name": "PetPass Ph",
+  "short_name": "PetPass",
   "description": "Veterinary clinic management system for pet records",
   "start_url": "/",
   "display": "standalone",

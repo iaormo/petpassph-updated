@@ -3,6 +3,7 @@ import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Layout from '@/components/Layout';
 import QRScanner from '@/components/QRScanner';
+import { mockCredentials } from '@/lib/data/mockAuth';
 
 const Scanner = () => {
   const navigate = useNavigate();
@@ -12,6 +13,16 @@ const Scanner = () => {
     const isAuth = localStorage.getItem('isAuth') === 'true';
     if (!isAuth) {
       navigate('/');
+      return;
+    }
+    
+    // Check if user role is veterinary
+    const username = localStorage.getItem('username');
+    const user = mockCredentials.find(cred => cred.username === username);
+    
+    if (!user || user.role !== 'veterinary') {
+      // Redirect to dashboard if not veterinary staff
+      navigate('/dashboard');
     }
   }, [navigate]);
 
