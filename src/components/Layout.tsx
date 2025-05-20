@@ -1,13 +1,11 @@
 
-// Since we can't directly edit the Layout.tsx file (it's read-only), 
-// we need to create a new Layout component file that doesn't have the type error.
-
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
 import { Camera, Home, LogOut, Menu, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { mockCredentials } from '@/lib/data/mockAuth';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -15,8 +13,17 @@ interface LayoutProps {
 
 const Layout: React.FC<LayoutProps> = ({ children }) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [userRole, setUserRole] = useState<"veterinary" | "owner">("veterinary");
   const location = useLocation();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const username = localStorage.getItem('username');
+    const user = mockCredentials.find(cred => cred.username === username);
+    if (user) {
+      setUserRole(user.role);
+    }
+  }, []);
 
   const handleLogout = () => {
     localStorage.removeItem('isAuth');
@@ -27,9 +34,12 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
     setSidebarOpen(!sidebarOpen);
   };
 
+  // Only show QR Scanner menu item for veterinary staff
   const menuItems = [
     { path: '/dashboard', label: 'Dashboard', icon: <Home className="mr-2 h-5 w-5" /> },
-    { path: '/scanner', label: 'QR Scanner', icon: <Camera className="mr-2 h-5 w-5" /> },
+    ...(userRole === "veterinary" ? [
+      { path: '/scanner', label: 'QR Scanner', icon: <Camera className="mr-2 h-5 w-5" /> }
+    ] : [])
   ];
 
   const isActive = (path: string) => {
@@ -53,7 +63,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
       )}>
         <div className="h-full flex flex-col">
           <div className="p-4 border-b flex items-center justify-between">
-            <h2 className="text-xl font-semibold text-foreground">PetCare CRM</h2>
+            <h2 className="text-xl font-semibold text-foreground">PetPass Ph</h2>
             <Button variant="ghost" size="icon" className="lg:hidden" onClick={toggleSidebar}>
               <X className="h-5 w-5" />
             </Button>

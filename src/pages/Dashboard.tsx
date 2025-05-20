@@ -94,7 +94,7 @@ const Dashboard = () => {
         {userRole === "veterinary" && <DashboardStats />}
         
         <h2 className="text-2xl font-semibold mt-8 mb-4">
-          {userRole === "veterinary" ? "Recent Patients" : "My Pets"}
+          {userRole === "owner" ? "My Pets" : "Recent Patients"}
         </h2>
         
         {pets.length === 0 ? (
@@ -104,7 +104,7 @@ const Dashboard = () => {
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {pets.map(pet => (
-              <PetCard key={pet.id} pet={pet} />
+              <PetCard key={pet.id} pet={pet} showQR={userRole === "veterinary"} />
             ))}
           </div>
         )}
