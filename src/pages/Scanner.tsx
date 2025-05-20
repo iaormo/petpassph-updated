@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import Layout from '@/components/Layout';
 import QRScanner from '@/components/QRScanner';
 import { mockCredentials } from '@/lib/data/mockAuth';
+import { toast } from '@/hooks/use-toast';
 
 const Scanner = () => {
   const navigate = useNavigate();
@@ -22,6 +23,11 @@ const Scanner = () => {
     
     if (!user || user.role !== 'veterinary') {
       // Redirect to dashboard if not veterinary staff
+      toast({
+        title: "Access Denied",
+        description: "Only veterinary staff can access the QR scanner.",
+        variant: "destructive"
+      });
       navigate('/dashboard');
     }
   }, [navigate]);
