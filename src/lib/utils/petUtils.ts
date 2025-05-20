@@ -61,7 +61,7 @@ export const addPet = (newPet: Pet): Pet => {
   
   // Generate a QR code if one is not provided
   if (!newPet.qrCode) {
-    newPet.qrCode = newPet.id;
+    newPet.qrCode = generateQRCode();
   }
 
   // Initialize empty arrays for records if not provided
@@ -82,4 +82,20 @@ export const generateQRCode = (): string => {
 // Helper function to get pets by owner
 export const getPetsByOwner = (ownerIds: string[]): Pet[] => {
   return mockPets.filter(pet => ownerIds.includes(pet.id));
+};
+
+// Helper function to check if a user has access to a specific pet
+export const hasAccessToPet = (username: string, petId: string): boolean => {
+  // Import locally to avoid circular dependencies
+  const { mockCredentials } = require("../data/mockAuth");
+  
+  const user = mockCredentials.find(cred => cred.username === username);
+  
+  if (!user) return false;
+  
+  // Veterinary staff has access to all pets
+  if (user.role === "veterinary") return true;
+  
+  // Owners only have access to their own pets
+  return user.petsOwned ? user.petsOwned.includes(petId) : false;
 };

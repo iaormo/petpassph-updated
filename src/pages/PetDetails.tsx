@@ -2,13 +2,14 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import Layout from '@/components/Layout';
-import { Pet, Credentials } from '@/lib/models/types';
+import { Pet } from '@/lib/models/types';
 import { getPetById } from '@/lib/utils/petUtils';
 import PetHeader from '@/components/pet-details/PetHeader';
 import PetInfoCard from '@/components/pet-details/PetInfoCard';
 import QRCodeCard from '@/components/pet-details/QRCodeCard';
 import PetDetailsTabs from '@/components/pet-details/PetDetailsTabs';
 import { mockCredentials } from '@/lib/data/mockAuth';
+import { toast } from '@/hooks/use-toast';
 
 const PetDetails = () => {
   const { id } = useParams<{ id: string }>();
@@ -17,6 +18,7 @@ const PetDetails = () => {
   const [loading, setLoading] = useState(true);
   const [isEditing, setIsEditing] = useState(false);
   const [userRole, setUserRole] = useState<"veterinary" | "owner">("veterinary");
+  const [authorized, setAuthorized] = useState(false);
 
   useEffect(() => {
     // Check if user is authenticated
@@ -34,9 +36,21 @@ const PetDetails = () => {
       setUserRole(user.role);
       
       // If user is owner, check if they own this pet
-      if (user.role === "owner" && user.petsOwned && id && !user.petsOwned.includes(id)) {
-        navigate('/dashboard');
-        return;
+      if (user.role === "owner") {
+        if (user.petsOwned && id && user.petsOwned.includes(id)) {
+          setAuthorized(true);
+        } else {
+          toast({
+            title: "Access Denied",
+            description: "You do not have permission to view this pet.",
+            variant: "destructive"
+          });
+          navigate('/dashboard');
+          return;
+        }
+      } else {
+        // Veterinary staff has access to all pets
+        setAuthorized(true);
       }
     }
 
@@ -57,6 +71,16 @@ const PetDetails = () => {
       <Layout>
         <div className="flex items-center justify-center h-screen">
           <div className="animate-pulse-gentle">Loading pet information...</div>
+        </div>
+      </Layout>
+    );
+  }
+
+  if (!authorized) {
+    return (
+      <Layout>
+        <div className="flex items-center justify-center h-screen">
+          <div className="text-red-500">You do not have permission to view this pet.</div>
         </div>
       </Layout>
     );
