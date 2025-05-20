@@ -12,9 +12,10 @@ interface PetHeaderProps {
   setPet: React.Dispatch<React.SetStateAction<Pet | null>>;
   isEditing: boolean;
   setIsEditing: React.Dispatch<React.SetStateAction<boolean>>;
+  userRole: "veterinary" | "owner";
 }
 
-const PetHeader: React.FC<PetHeaderProps> = ({ pet, setPet, isEditing, setIsEditing }) => {
+const PetHeader: React.FC<PetHeaderProps> = ({ pet, setPet, isEditing, setIsEditing, userRole }) => {
   const handlePetUpdate = (updatedPet: Pet) => {
     setPet(updatedPet);
     setIsEditing(false);
@@ -43,22 +44,24 @@ const PetHeader: React.FC<PetHeaderProps> = ({ pet, setPet, isEditing, setIsEdit
         <Button variant="outline" asChild>
           <Link to="/scanner">Back to Scanner</Link>
         </Button>
-        <Sheet open={isEditing} onOpenChange={setIsEditing}>
-          <SheetTrigger asChild>
-            <Button>Edit Pet Info</Button>
-          </SheetTrigger>
-          <SheetContent className="sm:max-w-lg overflow-y-auto">
-            <SheetHeader>
-              <SheetTitle>Edit Pet Information</SheetTitle>
-              <SheetDescription>
-                Make changes to {pet.name}'s information here. Click save when you're done.
-              </SheetDescription>
-            </SheetHeader>
-            <div className="py-6">
-              <PetForm pet={pet} onSubmit={handlePetUpdate} />
-            </div>
-          </SheetContent>
-        </Sheet>
+        {userRole === "veterinary" && (
+          <Sheet open={isEditing} onOpenChange={setIsEditing}>
+            <SheetTrigger asChild>
+              <Button>Edit Pet Info</Button>
+            </SheetTrigger>
+            <SheetContent className="sm:max-w-lg overflow-y-auto">
+              <SheetHeader>
+                <SheetTitle>Edit Pet Information</SheetTitle>
+                <SheetDescription>
+                  Make changes to {pet.name}'s information here. Click save when you're done.
+                </SheetDescription>
+              </SheetHeader>
+              <div className="py-6">
+                <PetForm pet={pet} onSubmit={handlePetUpdate} />
+              </div>
+            </SheetContent>
+          </Sheet>
+        )}
       </div>
     </div>
   );

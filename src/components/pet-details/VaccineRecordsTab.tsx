@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { PlusCircle, Vaccine } from 'lucide-react';
+import { PlusCircle, Plus } from 'lucide-react';
 import { Pet, VaccineRecord } from '@/lib/models/types';
 import { toast } from '@/hooks/use-toast';
 import { addVaccineRecord } from '@/lib/utils/petUtils';
@@ -87,7 +87,7 @@ const VaccineRecordCard: React.FC<VaccineRecordCardProps> = ({ record }) => {
     <div className="border rounded-md p-4">
       <div className="flex justify-between mb-2">
         <h4 className="font-medium flex items-center">
-          <Vaccine className="mr-2 h-4 w-4" />
+          <Plus className="mr-2 h-4 w-4" /> {/* Replaced Vaccine icon with Plus */}
           {record.vaccineName}
         </h4>
         <span className="text-sm text-muted-foreground">

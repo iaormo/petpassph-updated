@@ -45,10 +45,16 @@ const AddVaccineRecordForm: React.FC<AddVaccineRecordFormProps> = ({ petId, onSu
   });
 
   const handleSubmit = (values: FormValues) => {
+    // Create vaccine record with required properties to match the VaccineRecord type
     const vaccineRecord: VaccineRecord = {
       id: `vr${Date.now().toString()}`,
       date: new Date().toISOString().split('T')[0],
-      ...values,
+      vaccineName: values.vaccineName,
+      manufacturer: values.manufacturer,
+      lotNumber: values.lotNumber,
+      expirationDate: values.expirationDate,
+      veterinarian: values.veterinarian,
+      nextDueDate: values.nextDueDate,
     };
 
     onSubmit(vaccineRecord);

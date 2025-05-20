@@ -43,10 +43,14 @@ const AddNoteForm: React.FC<AddNoteFormProps> = ({ petId, onSubmit }) => {
   });
 
   const handleSubmit = (values: FormValues) => {
+    // Create note with required properties to match the Note type
     const note: Note = {
       id: `n${Date.now().toString()}`,
       date: new Date().toISOString().split('T')[0],
-      ...values,
+      title: values.title,
+      content: values.content,
+      createdBy: values.createdBy,
+      isPrivate: values.isPrivate,
     };
 
     onSubmit(note);
