@@ -7,7 +7,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Label } from '@/components/ui/label';
 import { Dog, LogIn } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import { mockCredentials } from '@/lib/mockData';
+import { mockCredentials } from '@/lib/data/mockAuth';
 
 const LoginForm = () => {
   const [username, setUsername] = useState('');
@@ -23,12 +23,25 @@ const LoginForm = () => {
     // Simulate API call
     await new Promise(resolve => setTimeout(resolve, 1000));
 
-    if (username === mockCredentials.username && password === mockCredentials.password) {
+    // Find user in mock data
+    const user = mockCredentials.find(
+      cred => cred.username === username && cred.password === password
+    );
+
+    if (user) {
       localStorage.setItem('isAuth', 'true');
+      localStorage.setItem('username', user.username);
+      localStorage.setItem('userRole', user.role);
+      
+      const welcomeMessage = user.role === 'veterinary' 
+        ? 'Welcome to PetCare Clinic CRM' 
+        : 'Welcome to PetCare Owner Portal';
+      
       toast({
         title: "Login successful",
-        description: "Welcome to PetCare Clinic CRM",
+        description: welcomeMessage,
       });
+      
       navigate('/dashboard');
     } else {
       toast({
@@ -47,7 +60,7 @@ const LoginForm = () => {
         <div className="p-2 rounded-full bg-vet-light flex items-center justify-center mb-2">
           <Dog className="h-8 w-8 text-vet-blue" />
         </div>
-        <CardTitle className="text-2xl font-bold text-center">PetCare Clinic CRM</CardTitle>
+        <CardTitle className="text-2xl font-bold text-center">PetCare Clinic Portal</CardTitle>
         <CardDescription className="text-center">Enter your credentials to access the system</CardDescription>
       </CardHeader>
       <CardContent>
@@ -57,7 +70,7 @@ const LoginForm = () => {
             <Input
               id="username"
               type="email"
-              placeholder="demo@vetclinic.com"
+              placeholder="demo@vetclinic.com or john@example.com"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
               required
@@ -96,9 +109,12 @@ const LoginForm = () => {
           </Button>
         </form>
       </CardContent>
-      <CardFooter className="flex justify-center">
+      <CardFooter className="flex flex-col justify-center space-y-2">
         <p className="text-sm text-muted-foreground">
-          Demo credentials: demo@vetclinic.com / password123
+          <strong>Veterinary staff:</strong> demo@vetclinic.com / password123
+        </p>
+        <p className="text-sm text-muted-foreground">
+          <strong>Pet owner:</strong> john@example.com / owner123
         </p>
       </CardFooter>
     </Card>

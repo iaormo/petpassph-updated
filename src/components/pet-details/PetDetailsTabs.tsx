@@ -2,15 +2,17 @@
 import React from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import MedicalRecordsTab from './MedicalRecordsTab';
-import PlaceholderTab from './PlaceholderTab';
+import VaccineRecordsTab from './VaccineRecordsTab';
+import NotesTab from './NotesTab';
 import { Pet } from '@/lib/models/types';
 
 interface PetDetailsTabsProps {
   pet: Pet;
   setPet?: React.Dispatch<React.SetStateAction<Pet | null>>;
+  userRole: "veterinary" | "owner";
 }
 
-const PetDetailsTabs: React.FC<PetDetailsTabsProps> = ({ pet, setPet }) => {
+const PetDetailsTabs: React.FC<PetDetailsTabsProps> = ({ pet, setPet, userRole }) => {
   return (
     <Tabs defaultValue="medical" className="w-full">
       <TabsList className="grid grid-cols-3 mb-4">
@@ -19,21 +21,13 @@ const PetDetailsTabs: React.FC<PetDetailsTabsProps> = ({ pet, setPet }) => {
         <TabsTrigger value="notes">Notes</TabsTrigger>
       </TabsList>
       <TabsContent value="medical">
-        <MedicalRecordsTab pet={pet} setPet={setPet} />
+        <MedicalRecordsTab pet={pet} setPet={setPet} userRole={userRole} />
       </TabsContent>
       <TabsContent value="vaccines">
-        <PlaceholderTab 
-          title="Vaccination Record" 
-          description={`Vaccination history for ${pet.name}`}
-          message="Vaccination records are being migrated to the new system." 
-        />
+        <VaccineRecordsTab pet={pet} setPet={setPet} userRole={userRole} />
       </TabsContent>
       <TabsContent value="notes">
-        <PlaceholderTab 
-          title="Clinical Notes" 
-          description={`Additional notes for ${pet.name}`}
-          message="No clinical notes available for this pet." 
-        />
+        <NotesTab pet={pet} setPet={setPet} userRole={userRole} />
       </TabsContent>
     </Tabs>
   );

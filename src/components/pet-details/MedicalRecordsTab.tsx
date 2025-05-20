@@ -12,9 +12,10 @@ import { addMedicalRecord } from '@/lib/utils/petUtils';
 interface MedicalRecordsTabProps {
   pet: Pet;
   setPet?: React.Dispatch<React.SetStateAction<Pet | null>>;
+  userRole: "veterinary" | "owner";
 }
 
-const MedicalRecordsTab: React.FC<MedicalRecordsTabProps> = ({ pet, setPet }) => {
+const MedicalRecordsTab: React.FC<MedicalRecordsTabProps> = ({ pet, setPet, userRole }) => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   
   const handleAddMedicalRecord = (record: MedicalRecord) => {
@@ -40,23 +41,25 @@ const MedicalRecordsTab: React.FC<MedicalRecordsTabProps> = ({ pet, setPet }) =>
           <CardTitle>Medical Records</CardTitle>
           <CardDescription>Complete medical history for {pet.name}</CardDescription>
         </div>
-        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-          <DialogTrigger asChild>
-            <Button size="sm" className="ml-auto" variant="outline">
-              <PlusCircle className="mr-2 h-4 w-4" />
-              Add Record
-            </Button>
-          </DialogTrigger>
-          <DialogContent className="sm:max-w-[525px]">
-            <DialogHeader>
-              <DialogTitle>Add Medical Record</DialogTitle>
-              <DialogDescription>
-                Add a new medical record for {pet.name}. Fill in all the required fields.
-              </DialogDescription>
-            </DialogHeader>
-            <AddMedicalRecordForm petId={pet.id} onSubmit={handleAddMedicalRecord} />
-          </DialogContent>
-        </Dialog>
+        {userRole === "veterinary" && (
+          <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+            <DialogTrigger asChild>
+              <Button size="sm" className="ml-auto" variant="outline">
+                <PlusCircle className="mr-2 h-4 w-4" />
+                Add Record
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-[525px]">
+              <DialogHeader>
+                <DialogTitle>Add Medical Record</DialogTitle>
+                <DialogDescription>
+                  Add a new medical record for {pet.name}. Fill in all the required fields.
+                </DialogDescription>
+              </DialogHeader>
+              <AddMedicalRecordForm petId={pet.id} onSubmit={handleAddMedicalRecord} />
+            </DialogContent>
+          </Dialog>
+        )}
       </CardHeader>
       <CardContent>
         <div className="space-y-4">
@@ -66,7 +69,7 @@ const MedicalRecordsTab: React.FC<MedicalRecordsTabProps> = ({ pet, setPet }) =>
             ))
           ) : (
             <div className="text-center py-8 text-muted-foreground">
-              No medical records found. Add a record to get started.
+              No medical records found. {userRole === "veterinary" ? "Add a record to get started." : ""}
             </div>
           )}
         </div>

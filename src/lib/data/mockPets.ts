@@ -1,4 +1,3 @@
-
 import { Pet } from "../models/types";
 
 // Mock pet data for development and testing
@@ -33,6 +32,46 @@ export const mockPets: Pet[] = [
         veterinarian: "Dr. Martinez"
       }
     ],
+    vaccineRecords: [
+      {
+        id: "vr001",
+        date: "2023-05-10",
+        vaccineName: "Rabies",
+        manufacturer: "VetPharm",
+        lotNumber: "RB456789",
+        expirationDate: "2025-05-10",
+        veterinarian: "Dr. Wilson",
+        nextDueDate: "2024-05-10"
+      },
+      {
+        id: "vr002",
+        date: "2023-05-10",
+        vaccineName: "DHPP",
+        manufacturer: "PetVax",
+        lotNumber: "DH123456",
+        expirationDate: "2024-11-10",
+        veterinarian: "Dr. Wilson",
+        nextDueDate: "2024-05-10"
+      }
+    ],
+    notes: [
+      {
+        id: "n001",
+        date: "2023-05-10",
+        title: "Friendly dog",
+        content: "Max is a very friendly dog who loves treats. Always wags his tail during exams.",
+        createdBy: "Dr. Wilson",
+        isPrivate: false
+      },
+      {
+        id: "n002",
+        date: "2023-05-10",
+        title: "Owner concerns",
+        content: "Owner concerned about slight limping after long walks. Monitor on next visit.",
+        createdBy: "Dr. Wilson",
+        isPrivate: true
+      }
+    ],
     qrCode: "p001"
   },
   {
@@ -54,6 +93,28 @@ export const mockPets: Pet[] = [
         treatment: "Full dental cleaning and examination",
         medication: "None",
         veterinarian: "Dr. Wilson"
+      }
+    ],
+    vaccineRecords: [
+      {
+        id: "vr003",
+        date: "2023-04-22",
+        vaccineName: "FVRCP",
+        manufacturer: "FeliVax",
+        lotNumber: "FV789012",
+        expirationDate: "2025-04-22",
+        veterinarian: "Dr. Wilson",
+        nextDueDate: "2024-04-22"
+      }
+    ],
+    notes: [
+      {
+        id: "n003",
+        date: "2023-04-22",
+        title: "Sensitive to handling",
+        content: "Bella becomes agitated when handled for too long. Keep examinations brief.",
+        createdBy: "Dr. Wilson",
+        isPrivate: false
       }
     ],
     qrCode: "p002"
@@ -80,6 +141,28 @@ export const mockPets: Pet[] = [
         followUp: "1 week if not improved"
       }
     ],
+    vaccineRecords: [
+      {
+        id: "vr004",
+        date: "2023-05-15",
+        vaccineName: "Rabies",
+        manufacturer: "VetPharm",
+        lotNumber: "RB567890",
+        expirationDate: "2025-05-15",
+        veterinarian: "Dr. Martinez",
+        nextDueDate: "2024-05-15"
+      }
+    ],
+    notes: [
+      {
+        id: "n004",
+        date: "2023-05-15",
+        title: "Energetic puppy",
+        content: "Charlie is very energetic. Owner advised on proper exercise regimen.",
+        createdBy: "Dr. Martinez",
+        isPrivate: false
+      }
+    ],
     qrCode: "p003"
   },
   {
@@ -104,6 +187,28 @@ export const mockPets: Pet[] = [
         followUp: "3 months"
       }
     ],
+    vaccineRecords: [
+      {
+        id: "vr005",
+        date: "2023-05-02",
+        vaccineName: "FVRCP",
+        manufacturer: "FeliVax",
+        lotNumber: "FV123789",
+        expirationDate: "2025-05-02",
+        veterinarian: "Dr. Wilson",
+        nextDueDate: "2023-08-02"
+      }
+    ],
+    notes: [
+      {
+        id: "n005",
+        date: "2023-05-02",
+        title: "First time visit",
+        content: "Luna was calm during her first visit. Owner given kitten care instructions.",
+        createdBy: "Dr. Wilson",
+        isPrivate: false
+      }
+    ],
     qrCode: "p004"
   },
   {
@@ -125,6 +230,28 @@ export const mockPets: Pet[] = [
         treatment: "Blood work, joint examination",
         medication: "Joint supplement prescribed",
         veterinarian: "Dr. Martinez"
+      }
+    ],
+    vaccineRecords: [
+      {
+        id: "vr006",
+        date: "2023-03-20",
+        vaccineName: "Rabies",
+        manufacturer: "VetPharm",
+        lotNumber: "RB789012",
+        expirationDate: "2025-03-20",
+        veterinarian: "Dr. Martinez",
+        nextDueDate: "2024-03-20"
+      }
+    ],
+    notes: [
+      {
+        id: "n006",
+        date: "2023-03-20",
+        title: "Senior care",
+        content: "Cooper showing signs of arthritis. Recommended lower impact exercise and weight management.",
+        createdBy: "Dr. Martinez",
+        isPrivate: false
       }
     ],
     qrCode: "p005"
