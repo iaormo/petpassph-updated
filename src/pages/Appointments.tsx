@@ -4,13 +4,16 @@ import Layout from '@/components/Layout';
 import { Button } from '@/components/ui/button';
 import { mockCredentials } from '@/lib/data/mockAuth';
 import AppointmentsCalendar from '@/components/AppointmentsCalendar';
+import AppointmentDashboard from '@/components/appointments/AppointmentDashboard';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { useNavigate } from 'react-router-dom';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 const Appointments = () => {
   const [userRole, setUserRole] = useState<"veterinary" | "owner">("veterinary");
   const [ownerEmail, setOwnerEmail] = useState<string>('');
   const [selectedAppointment, setSelectedAppointment] = useState<any>(null);
+  const [activeTab, setActiveTab] = useState<"calendar" | "dashboard">("calendar");
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -38,13 +41,34 @@ const Appointments = () => {
       <div className="container mx-auto px-4 py-6">
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-8">
           <h1 className="text-3xl font-bold mb-4 md:mb-0">Appointments</h1>
+          <div className="flex items-center gap-4">
+            <Tabs 
+              value={activeTab} 
+              onValueChange={(value) => setActiveTab(value as "calendar" | "dashboard")}
+              className="w-[400px]"
+            >
+              <TabsList className="grid w-full grid-cols-2">
+                <TabsTrigger value="calendar">Calendar View</TabsTrigger>
+                <TabsTrigger value="dashboard">Dashboard</TabsTrigger>
+              </TabsList>
+            </Tabs>
+          </div>
         </div>
         
-        <AppointmentsCalendar 
-          isVeterinary={userRole === "veterinary"} 
-          ownerEmail={userRole === "owner" ? ownerEmail : undefined}
-          onSelectAppointment={setSelectedAppointment}
-        />
+        <TabsContent value="calendar" className={activeTab === "calendar" ? "block" : "hidden"}>
+          <AppointmentsCalendar 
+            isVeterinary={userRole === "veterinary"} 
+            ownerEmail={userRole === "owner" ? ownerEmail : undefined}
+            onSelectAppointment={setSelectedAppointment}
+          />
+        </TabsContent>
+        
+        <TabsContent value="dashboard" className={activeTab === "dashboard" ? "block" : "hidden"}>
+          <AppointmentDashboard 
+            isVeterinary={userRole === "veterinary"} 
+            ownerEmail={userRole === "owner" ? ownerEmail : undefined}
+          />
+        </TabsContent>
         
         {/* Appointment details dialog */}
         <Dialog 

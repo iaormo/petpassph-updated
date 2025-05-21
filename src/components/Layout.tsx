@@ -1,126 +1,95 @@
-
 import React, { useState, useEffect } from 'react';
-import { Link, useLocation } from 'react-router-dom';
-import { Button } from '@/components/ui/button';
-import { useNavigate } from 'react-router-dom';
-import { Camera, Calendar, Home, LogOut, Menu, X } from 'lucide-react';
-import { cn } from '@/lib/utils';
-import { mockCredentials } from '@/lib/data/mockAuth';
+import { Link, useLocation } from "react-router-dom";
+import { Home, Calendar, Search, Menu, X } from "lucide-react";
+import { cn } from "@/lib/utils";
 
-interface LayoutProps {
+interface Props {
   children: React.ReactNode;
 }
 
-const Layout: React.FC<LayoutProps> = ({ children }) => {
-  const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [userRole, setUserRole] = useState<"veterinary" | "owner">("veterinary");
+const Layout: React.FC<Props> = ({ children }) => {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const location = useLocation();
-  const navigate = useNavigate();
+
+  const toggleMenu = () => {
+    setIsMenuOpen(!isMenuOpen);
+  };
+
+  const closeMenu = () => {
+    setIsMenuOpen(false);
+  };
 
   useEffect(() => {
-    const username = localStorage.getItem('username');
-    const user = mockCredentials.find(cred => cred.username === username);
-    if (user) {
-      setUserRole(user.role);
-    }
-  }, []);
-
-  const handleLogout = () => {
-    localStorage.removeItem('isAuth');
-    navigate('/');
-  };
-
-  const toggleSidebar = () => {
-    setSidebarOpen(!sidebarOpen);
-  };
-
-  // Menu items based on user role
-  const menuItems = [
-    { path: '/dashboard', label: 'Dashboard', icon: <Home className="mr-2 h-5 w-5" /> },
-    { path: '/appointments', label: 'Appointments', icon: <Calendar className="mr-2 h-5 w-5" /> },
-    ...(userRole === "veterinary" ? [
-      { path: '/scanner', label: 'QR Scanner', icon: <Camera className="mr-2 h-5 w-5" /> }
-    ] : [])
-  ];
-
-  const isActive = (path: string) => {
-    return location.pathname === path;
-  };
+    closeMenu();
+  }, [location.pathname]);
 
   return (
-    <div className="flex h-screen bg-background overflow-hidden">
-      {/* Mobile sidebar backdrop */}
-      {sidebarOpen && (
-        <div 
-          className="fixed inset-0 z-40 bg-background/80 lg:hidden"
-          onClick={() => setSidebarOpen(false)} 
-        />
+    <div className="flex h-screen bg-gray-50">
+      {/* Mobile Menu */}
+      {isMenuOpen && (
+        <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm md:hidden">
+          <div className="absolute right-4 top-4">
+            <button onClick={toggleMenu} className="rounded-full p-2 hover:bg-gray-200">
+              <X className="h-6 w-6" />
+            </button>
+          </div>
+          <nav className="absolute inset-y-0 left-0 w-3/4 max-w-sm bg-white p-6 shadow-lg">
+            <Link to="/dashboard" className="flex items-center space-x-2 py-2 hover:bg-gray-100 rounded-md block" onClick={closeMenu}>
+              <Home className="h-5 w-5" />
+              <span>Dashboard</span>
+            </Link>
+            <Link to="/appointments" className="flex items-center space-x-2 py-2 hover:bg-gray-100 rounded-md block" onClick={closeMenu}>
+              <Calendar className="h-5 w-5" />
+              <span>Appointments</span>
+            </Link>
+            <Link to="/scanner" className="flex items-center space-x-2 py-2 hover:bg-gray-100 rounded-md block" onClick={closeMenu}>
+              <Search className="h-5 w-5" />
+              <span>Scanner</span>
+            </Link>
+          </nav>
+        </div>
       )}
 
-      {/* Sidebar */}
-      <aside className={cn(
-        "fixed inset-y-0 left-0 z-50 w-64 bg-white border-r border-border transform transition-transform duration-200 ease-in-out lg:translate-x-0 lg:static lg:z-0",
-        sidebarOpen ? "translate-x-0" : "-translate-x-full"
-      )}>
-        <div className="h-full flex flex-col">
-          <div className="p-4 border-b flex items-center justify-between">
-            <h2 className="text-xl font-semibold text-foreground">PetPass Ph</h2>
-            <Button variant="ghost" size="icon" className="lg:hidden" onClick={toggleSidebar}>
-              <X className="h-5 w-5" />
-            </Button>
-          </div>
-
-          <nav className="flex-1 p-4 space-y-1">
-            {menuItems.map((item) => (
-              <Link 
-                key={item.path} 
-                to={item.path}
-                className={cn(
-                  "flex items-center px-3 py-2 rounded-md text-sm font-medium transition-colors",
-                  isActive(item.path) 
-                    ? "bg-accent text-accent-foreground"
-                    : "text-muted-foreground hover:bg-muted"
-                )}
-              >
-                {item.icon}
-                {item.label}
-              </Link>
-            ))}
-          </nav>
-
-          <div className="p-4 border-t">
-            <Button
-              variant="outline"
-              className="w-full flex items-center justify-center text-muted-foreground"
-              onClick={handleLogout}
-            >
-              <LogOut className="mr-2 h-4 w-4" />
-              Sign Out
-            </Button>
-          </div>
+      {/* Sidebar (hidden on small screens) */}
+      <aside className="hidden md:flex md:w-64 md:flex-col md:fixed md:inset-y-0 md:bg-gray-800 text-white">
+        <div className="flex items-center justify-center h-16 bg-gray-900">
+          <span className="text-lg font-semibold">Vet Clinic App</span>
         </div>
+        <nav className="flex-1 px-2 py-4">
+          <Link to="/dashboard" className={cn("flex items-center space-x-2 py-2 hover:bg-gray-700 rounded-md", location.pathname === "/dashboard" ? "bg-gray-700" : "")}>
+            <Home className="h-5 w-5" />
+            <span>Dashboard</span>
+          </Link>
+          <Link to="/appointments" className={cn("flex items-center space-x-2 py-2 hover:bg-gray-700 rounded-md", location.pathname === "/appointments" ? "bg-gray-700" : "")}>
+            <Calendar className="h-5 w-5" />
+            <span>Appointments</span>
+          </Link>
+          <Link to="/scanner" className={cn("flex items-center space-x-2 py-2 hover:bg-gray-700 rounded-md", location.pathname === "/scanner" ? "bg-gray-700" : "")}>
+            <Search className="h-5 w-5" />
+            <span>Scanner</span>
+          </Link>
+        </nav>
       </aside>
 
-      {/* Main content */}
-      <div className="flex-1 flex flex-col h-full overflow-hidden">
-        {/* Top nav */}
-        <header className="h-14 border-b flex items-center px-4 sm:px-6">
-          <Button 
-            variant="ghost" 
-            size="icon" 
-            className="lg:hidden" 
-            onClick={toggleSidebar}
-          >
-            <Menu className="h-5 w-5" />
-          </Button>
-          <div className="ml-auto flex items-center space-x-2">
-            {/* Add any header controls here */}
+      {/* Main Content */}
+      <div className="flex-1 md:ml-64">
+        {/* Header */}
+        <header className="bg-white shadow">
+          <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8 flex justify-between items-center">
+            <h2 className="text-xl font-semibold text-gray-800">
+              {location.pathname.substring(1).charAt(0).toUpperCase() + location.pathname.substring(2)}
+            </h2>
+            <button onClick={toggleMenu} className="md:hidden rounded-full p-2 hover:bg-gray-200">
+              <Menu className="h-6 w-6" />
+            </button>
           </div>
         </header>
 
-        {/* Page content */}
-        <main className="flex-1 overflow-auto">
-          {children}
+        {/* Page Content */}
+        <main>
+          <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+            {children}
+          </div>
         </main>
       </div>
     </div>

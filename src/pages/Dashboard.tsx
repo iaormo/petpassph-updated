@@ -5,7 +5,9 @@ import DashboardStats from '@/components/DashboardStats';
 import PetList from '@/components/dashboard/PetList';
 import AddPetButton from '@/components/dashboard/AddPetButton';
 import SyncButton from '@/components/dashboard/SyncButton';
+import AppointmentDashboard from '@/components/appointments/AppointmentDashboard';
 import { usePets } from '@/hooks/usePets';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 const Dashboard: React.FC = () => {
   const {
@@ -40,11 +42,27 @@ const Dashboard: React.FC = () => {
         
         {userRole === "veterinary" && <DashboardStats />}
         
-        <h2 className="text-2xl font-semibold mt-8 mb-4">
-          {userRole === "owner" ? "My Pets" : "Recent Patients"}
-        </h2>
-        
-        <PetList pets={pets} userRole={userRole} />
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-8">
+          <div>
+            <Card className="mb-6">
+              <CardHeader className="pb-2">
+                <CardTitle className="text-2xl font-semibold">
+                  {userRole === "owner" ? "My Pets" : "Recent Patients"}
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <PetList pets={pets} userRole={userRole} />
+              </CardContent>
+            </Card>
+          </div>
+          
+          <div>
+            <AppointmentDashboard 
+              isVeterinary={userRole === "veterinary"} 
+              ownerEmail={userRole === "owner" ? localStorage.getItem('username') || '' : undefined}
+            />
+          </div>
+        </div>
       </div>
     </Layout>
   );
