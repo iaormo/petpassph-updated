@@ -7,7 +7,7 @@ import AddPetButton from '@/components/dashboard/AddPetButton';
 import SyncButton from '@/components/dashboard/SyncButton';
 import { usePets } from '@/hooks/usePets';
 
-const Dashboard = () => {
+const Dashboard: React.FC = () => {
   const {
     pets,
     userRole,
