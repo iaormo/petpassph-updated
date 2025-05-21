@@ -1,130 +1,103 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import QrReader from 'react-qr-scanner';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { useToast } from '@/hooks/use-toast';
-import { getPetByQRCode } from '@/lib/mockData';
+import { Card, CardContent, CardFooter } from '@/components/ui/card';
+import { AlertCircle, Camera } from 'lucide-react';
+import { toast } from '@/hooks/use-toast';
+import { getPetByQRCode } from '@/lib/utils/petUtils';
+import QrReader from 'react-qr-scanner';
 
-interface ScanResult {
-  text: string;
-}
-
-const QRScanner = () => {
+const QRScanner: React.FC = () => {
   const [scanning, setScanning] = useState(false);
-  const [result, setResult] = useState<string | null>(null);
-  const [delay, setDelay] = useState(300);
-  const [facingMode, setFacingMode] = useState<'user' | 'environment'>('environment');
+  const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
-  const { toast } = useToast();
 
-  const handleScan = (data: ScanResult | null) => {
-    if (data && data.text) {
-      setResult(data.text);
-      setScanning(false);
+  const handleScan = (data: { text: string } | null) => {
+    if (data) {
+      console.log('Scanned QR code:', data.text);
       
-      // Check if the QR code corresponds to a pet
       const pet = getPetByQRCode(data.text);
       
       if (pet) {
         toast({
-          title: "Pet found!",
-          description: `Loading record for ${pet.name}`,
+          title: "QR Code Scanned",
+          description: `Found pet: ${pet.name}`,
         });
         
-        // Navigate to pet details page
+        // Navigate to the pet details page
         navigate(`/pet/${pet.id}`);
+        
+        // Stop scanning
+        setScanning(false);
       } else {
         toast({
-          title: "Invalid QR Code",
-          description: "No pet record found for this QR code.",
-          variant: "destructive",
+          title: "Unknown QR Code",
+          description: "No pet found with this QR code.",
+          variant: "destructive"
         });
       }
     }
   };
 
   const handleError = (err: any) => {
-    console.error(err);
+    console.error('QR Scanner error:', err);
+    setError(err.toString());
     toast({
-      title: "Camera Error",
-      description: "Please check camera permissions and try again.",
-      variant: "destructive",
+      title: "Scanner Error",
+      description: "There was an error with the QR scanner. Please check camera permissions.",
+      variant: "destructive"
     });
   };
 
-  const toggleCamera = () => {
-    setFacingMode(prevMode => prevMode === 'user' ? 'environment' : 'user');
+  const toggleScanning = () => {
+    setScanning(!scanning);
+    setError(null);
   };
-
-  // Cleanup when component unmounts
-  useEffect(() => {
-    return () => {
-      setScanning(false);
-    };
-  }, []);
-
+  
   return (
-    <Card className="w-full max-w-md mx-auto shadow-md">
-      <CardHeader className="pb-2">
-        <CardTitle className="text-xl font-semibold text-center">Scan Pet QR Code</CardTitle>
-      </CardHeader>
-      <CardContent className="space-y-4">
-        {scanning ? (
-          <>
-            <div className="relative rounded-lg overflow-hidden aspect-square">
+    <Card className="max-w-md w-full">
+      {scanning ? (
+        <>
+          <CardContent className="p-0">
+            <div className="relative">
               <QrReader
-                delay={delay}
-                style={{ width: '100%' }}
+                delay={300}
+                className="w-full h-full"
+                constraints={{
+                  video: { facingMode: 'environment' }
+                }}
                 onError={handleError}
                 onScan={handleScan}
-                constraints={{
-                  audio: false,
-                  video: { facingMode }
-                }}
+                style={{ width: '100%', height: '100%' }}
               />
-              <div className="absolute inset-0 border-2 border-vet-blue/50 rounded-lg pointer-events-none"></div>
+              <div className="absolute inset-0 border-2 border-primary pointer-events-none" />
             </div>
-            <div className="flex justify-center space-x-2">
-              <Button 
-                onClick={() => setScanning(false)}
-                variant="outline" 
-                className="w-full"
-              >
-                Cancel
-              </Button>
-              <Button 
-                onClick={toggleCamera}
-                className="w-full"
-              >
-                {facingMode === 'user' ? 'Use Back Camera' : 'Use Front Camera'}
-              </Button>
-            </div>
-          </>
-        ) : (
-          <div className="flex flex-col items-center space-y-4">
-            {result && (
-              <div className="p-4 bg-muted rounded-md w-full">
-                <p className="text-sm font-medium">Last Scan Result:</p>
-                <p className="text-sm truncate">{result}</p>
+          </CardContent>
+          <CardFooter className="flex justify-between p-4">
+            {error && (
+              <div className="flex items-center text-destructive text-sm">
+                <AlertCircle className="h-4 w-4 mr-1" />
+                <span>Scanner error. Check permissions.</span>
               </div>
             )}
-            <div className="h-64 w-full flex items-center justify-center border-2 border-dashed border-muted-foreground/50 rounded-lg">
-              <div className="text-center px-4">
-                <p className="text-muted-foreground mb-2">Ready to scan a pet's QR code</p>
-                <Button 
-                  onClick={() => setScanning(true)}
-                  className="vet-gradient hover:opacity-90 transition-opacity"
-                >
-                  Start Scanning
-                </Button>
-              </div>
-            </div>
-            <p className="text-sm text-muted-foreground">Position the QR code within the camera frame to scan</p>
-          </div>
-        )}
-      </CardContent>
+            <Button variant="outline" onClick={toggleScanning}>Stop Scanning</Button>
+          </CardFooter>
+        </>
+      ) : (
+        <>
+          <CardContent className="p-6 flex flex-col items-center justify-center h-64">
+            <Camera className="h-16 w-16 text-muted-foreground mb-4" />
+            <h3 className="text-xl font-medium mb-2">QR Code Scanner</h3>
+            <p className="text-center text-muted-foreground text-sm mb-4">
+              Click below to activate the camera and scan a pet's QR code
+            </p>
+          </CardContent>
+          <CardFooter className="flex justify-center p-4">
+            <Button onClick={toggleScanning}>Start Scanning</Button>
+          </CardFooter>
+        </>
+      )}
     </Card>
   );
 };

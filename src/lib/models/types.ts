@@ -10,6 +10,7 @@ export interface Pet {
   weight: number;
   ownerName: string;
   ownerContact: string;
+  ownerEmail?: string; // Added for login generation
   lastVisit: string;
   medicalRecords: MedicalRecord[];
   vaccineRecords: VaccineRecord[];
@@ -70,4 +71,16 @@ export interface ActivityLogItem {
   id: string;
   time: string;
   action: string;
+}
+
+// Added for appointment booking functionality
+export interface Appointment {
+  id: string;
+  pet_id: string;
+  owner_email: string;
+  appointment_date: string;
+  duration: number;
+  status: string;
+  notes?: string;
+  ghl_appointment_id?: string;
 }

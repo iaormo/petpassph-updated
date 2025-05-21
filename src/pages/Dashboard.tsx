@@ -9,15 +9,17 @@ import { Pet } from '@/lib/models/types';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription, SheetTrigger } from '@/components/ui/sheet';
 import PetForm from '@/components/PetForm';
 import { toast } from '@/hooks/use-toast';
-import { PlusCircle } from 'lucide-react';
+import { PlusCircle, RefreshCw } from 'lucide-react';
 import { addPet, getPetsByOwner } from '@/lib/utils/petUtils';
 import { mockCredentials } from '@/lib/data/mockAuth';
+import { supabase } from '@/integrations/supabase/client';
 
 const Dashboard = () => {
   const [pets, setPets] = useState<Pet[]>([]);
   const [isAddingPet, setIsAddingPet] = useState(false);
   const [userRole, setUserRole] = useState<"veterinary" | "owner">("veterinary");
   const [dashboardTitle, setDashboardTitle] = useState("Vet Clinic Dashboard");
+  const [syncingPets, setSyncingPets] = useState(false);
 
   useEffect(() => {
     // Check user role and filter pets accordingly
@@ -56,6 +58,11 @@ const Dashboard = () => {
       }
     }
     
+    // Sync the new pet to Go High Level
+    if (addedPet.ownerEmail) {
+      syncPetToGoHighLevel(addedPet);
+    }
+    
     setIsAddingPet(false);
     toast({
       title: "Pet Added",
@@ -63,32 +70,113 @@ const Dashboard = () => {
     });
   };
 
+  const syncPetToGoHighLevel = async (pet: Pet) => {
+    try {
+      const response = await fetch('/api/functions/v1/go-high-level-sync/sync-pet', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          petId: pet.id,
+          petName: pet.name,
+          species: pet.species,
+          breed: pet.breed,
+          age: pet.age,
+          ownerName: pet.ownerName,
+          ownerEmail: pet.ownerEmail || 'unknown@example.com',
+          ownerContact: pet.ownerContact || 'unknown'
+        }),
+      });
+      
+      if (!response.ok) {
+        throw new Error('Failed to sync pet with Go High Level');
+      }
+      
+      return await response.json();
+    } catch (error) {
+      console.error('Error syncing pet to Go High Level:', error);
+      throw error;
+    }
+  };
+
+  const handleSyncAllPets = async () => {
+    if (userRole !== "veterinary") return;
+    
+    setSyncingPets(true);
+    
+    try {
+      // Only sync pets that have owner emails
+      const petsToSync = pets.filter(pet => pet.ownerEmail);
+      
+      if (petsToSync.length === 0) {
+        toast({
+          title: "No Pets to Sync",
+          description: "There are no pets with owner emails to sync to Go High Level.",
+          variant: "destructive"
+        });
+        return;
+      }
+      
+      // Sync each pet sequentially
+      for (const pet of petsToSync) {
+        await syncPetToGoHighLevel(pet);
+      }
+      
+      toast({
+        title: "Sync Complete",
+        description: `Successfully synced ${petsToSync.length} pets to Go High Level.`,
+      });
+    } catch (error: any) {
+      console.error('Error syncing pets:', error);
+      toast({
+        title: "Sync Failed",
+        description: error.message,
+        variant: "destructive"
+      });
+    } finally {
+      setSyncingPets(false);
+    }
+  };
+
   return (
     <Layout>
       <div className="container mx-auto px-4 py-6">
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-8">
           <h1 className="text-3xl font-bold mb-4 md:mb-0">{dashboardTitle}</h1>
-          {userRole === "veterinary" && (
-            <Sheet open={isAddingPet} onOpenChange={setIsAddingPet}>
-              <SheetTrigger asChild>
-                <Button>
-                  <PlusCircle className="mr-2 h-4 w-4" />
-                  Add New Pet
+          <div className="flex flex-col sm:flex-row gap-2">
+            {userRole === "veterinary" && (
+              <>
+                <Button 
+                  variant="outline"
+                  onClick={handleSyncAllPets}
+                  disabled={syncingPets}
+                >
+                  <RefreshCw className={`mr-2 h-4 w-4 ${syncingPets ? 'animate-spin' : ''}`} />
+                  {syncingPets ? "Syncing..." : "Sync with Go High Level"}
                 </Button>
-              </SheetTrigger>
-              <SheetContent className="sm:max-w-lg overflow-y-auto">
-                <SheetHeader>
-                  <SheetTitle>Add New Pet</SheetTitle>
-                  <SheetDescription>
-                    Fill in the pet's information below to add them to the system.
-                  </SheetDescription>
-                </SheetHeader>
-                <div className="py-6">
-                  <PetForm onSubmit={handleAddPet} />
-                </div>
-              </SheetContent>
-            </Sheet>
-          )}
+                <Sheet open={isAddingPet} onOpenChange={setIsAddingPet}>
+                  <SheetTrigger asChild>
+                    <Button>
+                      <PlusCircle className="mr-2 h-4 w-4" />
+                      Add New Pet
+                    </Button>
+                  </SheetTrigger>
+                  <SheetContent className="sm:max-w-lg overflow-y-auto">
+                    <SheetHeader>
+                      <SheetTitle>Add New Pet</SheetTitle>
+                      <SheetDescription>
+                        Fill in the pet's information below to add them to the system.
+                      </SheetDescription>
+                    </SheetHeader>
+                    <div className="py-6">
+                      <PetForm onSubmit={handleAddPet} />
+                    </div>
+                  </SheetContent>
+                </Sheet>
+              </>
+            )}
+          </div>
         </div>
         
         {userRole === "veterinary" && <DashboardStats />}

@@ -1,3 +1,4 @@
+
 import React from "react";
 import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
@@ -32,6 +33,7 @@ const PetForm: React.FC<PetFormProps> = ({ pet, onSubmit }) => {
       weight: 0,
       ownerName: "",
       ownerContact: "",
+      ownerEmail: "",
       lastVisit: new Date().toISOString().split("T")[0],
       qrCode: generateQRCode(),
       medicalRecords: [],
@@ -46,6 +48,8 @@ const PetForm: React.FC<PetFormProps> = ({ pet, onSubmit }) => {
     if (!isEditing) {
       data.id = data.qrCode || generateQRCode();
       data.medicalRecords = [];
+      data.vaccineRecords = [];
+      data.notes = [];
     }
 
     // Handle the image submission
@@ -215,7 +219,21 @@ const PetForm: React.FC<PetFormProps> = ({ pet, onSubmit }) => {
               <FormItem>
                 <FormLabel>Owner Contact</FormLabel>
                 <FormControl>
-                  <Input placeholder="Phone number or email" {...field} />
+                  <Input placeholder="Phone number" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="ownerEmail"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Owner Email</FormLabel>
+                <FormControl>
+                  <Input type="email" placeholder="Email address" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>

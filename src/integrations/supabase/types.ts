@@ -9,6 +9,45 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      appointments: {
+        Row: {
+          appointment_date: string
+          created_at: string
+          duration: number
+          ghl_appointment_id: string | null
+          id: string
+          notes: string | null
+          owner_email: string
+          pet_id: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          appointment_date: string
+          created_at?: string
+          duration?: number
+          ghl_appointment_id?: string | null
+          id?: string
+          notes?: string | null
+          owner_email: string
+          pet_id: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          appointment_date?: string
+          created_at?: string
+          duration?: number
+          ghl_appointment_id?: string | null
+          id?: string
+          notes?: string | null
+          owner_email?: string
+          pet_id?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       chat_messages: {
         Row: {
           channel_id: string | null
@@ -46,6 +85,30 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      go_high_level_config: {
+        Row: {
+          api_key: string
+          company_id: string | null
+          created_at: string
+          id: string
+          location_id: string | null
+        }
+        Insert: {
+          api_key: string
+          company_id?: string | null
+          created_at?: string
+          id?: string
+          location_id?: string | null
+        }
+        Update: {
+          api_key?: string
+          company_id?: string | null
+          created_at?: string
+          id?: string
+          location_id?: string | null
+        }
+        Relationships: []
       }
       prayer_channel_members: {
         Row: {

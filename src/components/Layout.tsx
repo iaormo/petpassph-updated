@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
-import { Camera, Home, LogOut, Menu, X } from 'lucide-react';
+import { Camera, Calendar, Home, LogOut, Menu, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { mockCredentials } from '@/lib/data/mockAuth';
 
@@ -34,9 +34,10 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
     setSidebarOpen(!sidebarOpen);
   };
 
-  // Only show QR Scanner menu item for veterinary staff
+  // Menu items based on user role
   const menuItems = [
     { path: '/dashboard', label: 'Dashboard', icon: <Home className="mr-2 h-5 w-5" /> },
+    { path: '/appointments', label: 'Appointments', icon: <Calendar className="mr-2 h-5 w-5" /> },
     ...(userRole === "veterinary" ? [
       { path: '/scanner', label: 'QR Scanner', icon: <Camera className="mr-2 h-5 w-5" /> }
     ] : [])
