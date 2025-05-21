@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Pet } from '@/lib/models/types';
 import { mockPets } from '@/lib/data/mockPets';
 import { mockCredentials } from '@/lib/data/mockAuth';
