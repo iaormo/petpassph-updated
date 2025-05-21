@@ -1,5 +1,4 @@
-
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import {
@@ -152,7 +151,7 @@ const AppointmentBooking: React.FC<AppointmentBookingProps> = ({
   };
   
   // Load existing appointments when date changes
-  React.useEffect(() => {
+  useEffect(() => {
     const selectedDate = form.watch('appointmentDate');
     if (!selectedDate) return;
     
