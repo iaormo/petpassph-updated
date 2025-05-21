@@ -1,12 +1,12 @@
 
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from '@/components/ui/table';
 import { Calendar, Clock } from 'lucide-react';
 import { format } from 'date-fns';
 import { useAppointments } from '@/hooks/useAppointments';
-import { Link } from 'react-router-dom';
 
 interface AppointmentDashboardProps {
   isVeterinary: boolean;
