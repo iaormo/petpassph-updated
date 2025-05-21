@@ -4,9 +4,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import MedicalRecordsTab from './MedicalRecordsTab';
 import VaccineRecordsTab from './VaccineRecordsTab';
 import NotesTab from './NotesTab';
+import PetAppointmentTab from './PetAppointmentTab';
 import { Pet } from '@/lib/models/types';
-import { useParams } from 'react-router-dom';
-import AppointmentBooking from '../AppointmentBooking';
 
 interface PetDetailsTabsProps {
   pet: Pet;
@@ -15,8 +14,6 @@ interface PetDetailsTabsProps {
 }
 
 const PetDetailsTabs: React.FC<PetDetailsTabsProps> = ({ pet, setPet, userRole }) => {
-  const { id } = useParams();
-
   return (
     <Tabs defaultValue="medical" className="w-full">
       <TabsList className="grid grid-cols-4 mb-8">
@@ -39,14 +36,12 @@ const PetDetailsTabs: React.FC<PetDetailsTabsProps> = ({ pet, setPet, userRole }
       </TabsContent>
       
       <TabsContent value="appointment" className="space-y-4">
-        <div className="bg-white rounded-lg shadow-md p-6 max-w-md mx-auto">
-          <AppointmentBooking 
-            petId={pet.id}
-            petName={pet.name}
-            ownerName={pet.ownerName}
-            ownerEmail={pet.ownerEmail || ''}
-          />
-        </div>
+        <PetAppointmentTab
+          petId={pet.id}
+          petName={pet.name}
+          ownerName={pet.ownerName}
+          ownerEmail={pet.ownerEmail || ''}
+        />
       </TabsContent>
     </Tabs>
   );

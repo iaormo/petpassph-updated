@@ -11,7 +11,7 @@ import PetDetailsTabs from '@/components/pet-details/PetDetailsTabs';
 import { mockCredentials } from '@/lib/data/mockAuth';
 import { toast } from '@/hooks/use-toast';
 
-const PetDetails = () => {
+const PetDetails: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const [pet, setPet] = useState<Pet | null>(null);
@@ -70,7 +70,7 @@ const PetDetails = () => {
     return (
       <Layout>
         <div className="flex items-center justify-center h-screen">
-          <div className="animate-pulse-gentle">Loading pet information...</div>
+          <div className="animate-pulse">Loading pet information...</div>
         </div>
       </Layout>
     );
