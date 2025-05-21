@@ -15,27 +15,25 @@ import NotFound from "./pages/NotFound";
 // Create a client
 const queryClient = new QueryClient();
 
-const App = () => {
+function App() {
   return (
-    <React.StrictMode>
-      <QueryClientProvider client={queryClient}>
-        <TooltipProvider>
-          <Toaster />
-          <Sonner />
-          <BrowserRouter>
-            <Routes>
-              <Route path="/" element={<Index />} />
-              <Route path="/dashboard" element={<Dashboard />} />
-              <Route path="/scanner" element={<Scanner />} />
-              <Route path="/pet/:id" element={<PetDetails />} />
-              <Route path="/appointments" element={<Appointments />} />
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-          </BrowserRouter>
-        </TooltipProvider>
-      </QueryClientProvider>
-    </React.StrictMode>
+    <QueryClientProvider client={queryClient}>
+      <TooltipProvider>
+        <Toaster />
+        <Sonner />
+        <BrowserRouter>
+          <Routes>
+            <Route path="/" element={<Index />} />
+            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/scanner" element={<Scanner />} />
+            <Route path="/pet/:id" element={<PetDetails />} />
+            <Route path="/appointments" element={<Appointments />} />
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </BrowserRouter>
+      </TooltipProvider>
+    </QueryClientProvider>
   );
-};
+}
 
 export default App;
