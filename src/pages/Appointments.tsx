@@ -55,20 +55,24 @@ const Appointments = () => {
           </div>
         </div>
         
-        <TabsContent value="calendar" className={activeTab === "calendar" ? "block" : "hidden"}>
-          <AppointmentsCalendar 
-            isVeterinary={userRole === "veterinary"} 
-            ownerEmail={userRole === "owner" ? ownerEmail : undefined}
-            onSelectAppointment={setSelectedAppointment}
-          />
-        </TabsContent>
+        {activeTab === "calendar" && (
+          <div className="mt-4">
+            <AppointmentsCalendar 
+              isVeterinary={userRole === "veterinary"} 
+              ownerEmail={userRole === "owner" ? ownerEmail : undefined}
+              onSelectAppointment={setSelectedAppointment}
+            />
+          </div>
+        )}
         
-        <TabsContent value="dashboard" className={activeTab === "dashboard" ? "block" : "hidden"}>
-          <AppointmentDashboard 
-            isVeterinary={userRole === "veterinary"} 
-            ownerEmail={userRole === "owner" ? ownerEmail : undefined}
-          />
-        </TabsContent>
+        {activeTab === "dashboard" && (
+          <div className="mt-4">
+            <AppointmentDashboard 
+              isVeterinary={userRole === "veterinary"} 
+              ownerEmail={userRole === "owner" ? ownerEmail : undefined}
+            />
+          </div>
+        )}
         
         {/* Appointment details dialog */}
         <Dialog 

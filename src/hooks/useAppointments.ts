@@ -94,6 +94,7 @@ export const useAppointments = (isVeterinary: boolean = false, ownerEmail?: stri
     appointments,
     selectedDayAppointments,
     loading,
-    appointmentDates
+    appointmentDates,
+    fetchAppointments
   };
 };

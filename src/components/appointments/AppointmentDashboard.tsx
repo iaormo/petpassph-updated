@@ -6,6 +6,7 @@ import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from '@
 import { Calendar, Clock } from 'lucide-react';
 import { format } from 'date-fns';
 import { useAppointments } from '@/hooks/useAppointments';
+import { Link } from 'react-router-dom';
 
 interface AppointmentDashboardProps {
   isVeterinary: boolean;
